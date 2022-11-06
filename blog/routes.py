@@ -1,9 +1,10 @@
 import os
 import secrets
 from PIL import Image
+from flask_mail import Message
 from flask import render_template, url_for, flash, redirect, request, abort
-from blog import app, db, bcrypt
-from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm
+from blog import app, db, bcrypt, mail
+from blog.forms import RegistrationForm, LoginForm, UpdateAccountForm, PostForm, ContactForm
 from blog.models import User, Post
 from flask_login import login_user, current_user, logout_user, login_required
 
@@ -153,3 +154,22 @@ def user_posts(username):
         .order_by(Post.date_posted.desc())\
         .paginate(page=page, per_page=5)
     return render_template('user_posts.html', posts=posts, user=user)
+
+@app.route('/contact', methods=["GET","POST"])
+def contact():
+    form = ContactForm()
+    # # here, if the request type is a POST we get the data on contat
+    # #forms and save them else we return the contact forms html page
+    #if request.method == 'POST': 
+    if form.validate_on_submit():
+        name =  request.form["name"]
+        email = request.form["email"]
+        subject = request.form["subject"]
+        message = request.form["message"]
+        msg = Message(subject=f"{subject}", sender=f"{email}", recipients=['emusify419@outlook.com'], body=f"Name: {name}\n\n, {message}")
+        mail.send(msg)
+        flash('Your message has been sunmitted!', 'success')
+        #return render_template('contact.html', success = True)
+        return redirect(url_for('home'))
+    else:
+        return render_template('contact.html', form=form)

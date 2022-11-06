@@ -1,5 +1,5 @@
 # Project-app
-
+This is a blog app where any user visiting the website can read a blog post written by them or another user.
 ## Steps to run this project locally
 
 Clone the project

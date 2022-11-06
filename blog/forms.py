@@ -1,9 +1,11 @@
-from flask_wtf import FlaskForm
+from flask_wtf import FlaskForm, CSRFProtect
 from flask_wtf.file import FileField, FileAllowed
 from flask_login import current_user
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
 from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
 from blog.models import User
+
+csrf = CSRFProtect()
 
 
 class RegistrationForm(FlaskForm):
@@ -60,3 +62,11 @@ class PostForm(FlaskForm):
     title = StringField('Title', validators=[DataRequired()])
     content = TextAreaField('Content', validators=[DataRequired()])
     submit = SubmitField('Post')
+
+
+class ContactForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired('Name cannot be empty')])
+    email = StringField('E-mail', validators=[DataRequired('E-mail cannot be empty'),Email('Please provide a valid email')])
+    subject = StringField('Subject', validators=[DataRequired('Subject cannot be empty')])
+    message = TextAreaField('Message', validators=[DataRequired('Message cannot be empty')])
+    submit = SubmitField("Send")
